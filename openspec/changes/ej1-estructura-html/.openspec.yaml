@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-10-16
+goal: Especificar vistas, navegacion, semantica, formularios y estados del
+  Ejercicio 1 sin implementar CSS ni JS
