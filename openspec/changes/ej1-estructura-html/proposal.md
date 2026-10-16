@@ -12,6 +12,7 @@ El parcial exige una base HTML verificable antes de agregar estilos, datos y com
 - Se aplican etiquetas semánticas (`header`, `nav`, `main`, `section`, `footer`, `table`) y accesibilidad estructural: cada campo con `label` asociado, botones con texto de acción, tablas con `th`.
 - Se contemplan mensajes de estado: listas vacías, búsquedas sin resultados, operaciones correctas o rechazadas.
 - Se prevén los `id` y contenedores que JavaScript usará en Ej.3–5 (listados, historial, formularios), SIN implementar lógica JS ni estilos en este change.
+- Se crean `css/styles.css` y `js/app.js` como archivos vacíos (solo un comentario) enlazados desde `index.html`, y los selects llevan una primera opción vacía deshabilitada.
 
 ## Capabilities
 

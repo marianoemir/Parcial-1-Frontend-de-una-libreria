@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Librería El Ateneo Chico — Catálogo</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Librería El Ateneo Chico</h1>
+    <p>Maqueta Etapa 1 (Ejercicio 1): estructura HTML estática, sin funcionamiento todavía.</p>
+    <nav aria-label="Navegación principal" id="nav-principal">
+      <ul>
+        <li><a href="#catalogo" id="nav-catalogo" aria-current="page">Catálogo</a></li>
+        <li><a href="#libros" id="nav-libros">Libros</a></li>
+        <li><a href="#clientes" id="nav-clientes">Clientes</a></li>
+        <li><a href="#ventas" id="nav-ventas">Ventas</a></li>
+        <li><a href="#historial" id="nav-historial">Historial</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="contenido-principal">
+    <!-- Catálogo (vista inicial: index.html es el Catálogo) -->
+    <section id="catalogo" aria-labelledby="catalogo-titulo">
+      <h2 id="catalogo-titulo">Catálogo</h2>
+      <p><strong>Maqueta: sin funcionamiento todavía.</strong> Datos de ejemplo (no reales).</p>
+
+      <form id="catalogo-buscador-form" action="#" method="get">
+        <label for="catalogo-busqueda" id="catalogo-busqueda-label">Buscar por título</label>
+        <input type="search" id="catalogo-busqueda" name="busqueda" placeholder="Ej.: El principito">
+        <button type="button" id="catalogo-buscar-boton">Buscar</button>
+      </form>
+
+      <p id="catalogo-sin-resultados" role="status" hidden>No se encontraron libros con ese título (datos de ejemplo).</p>
+
+      <div id="catalogo-lista" aria-live="polite">
+        <article aria-labelledby="catalogo-libro-1-titulo">
+          <h3 id="catalogo-libro-1-titulo">El Principito (ejemplo)</h3>
+          <p>ISBN: 978-0156012195 (ejemplo)</p>
+          <p>Editorial: Editorial Ejemplo Uno</p>
+          <p>Género: Fábula</p>
+          <p>Autores: Antoine de Saint-Exupéry (ejemplo)</p>
+          <p>Precio: $5000.00 (ejemplo)</p>
+        </article>
+        <article aria-labelledby="catalogo-libro-2-titulo">
+          <h3 id="catalogo-libro-2-titulo">Cuentos reunidos (ejemplo)</h3>
+          <p>ISBN: 978-0000000002 (ejemplo)</p>
+          <p>Editorial: Editorial Ejemplo Dos</p>
+          <p>Género: Sin clasificar</p>
+          <p>Autores: Autora Ejemplo (ejemplo)</p>
+          <p>Precio: $3200.50 (ejemplo)</p>
+        </article>
+      </div>
+      <p id="catalogo-vacio" role="status" hidden>No hay libros en el catálogo (datos de ejemplo).</p>
+    </section>
+
+    <!-- Libros -->
+    <section id="libros" aria-labelledby="libros-titulo">
+      <h2 id="libros-titulo">Libros</h2>
+      <p><strong>Maqueta: sin funcionamiento todavía.</strong></p>
+
+      <h3 id="libros-form-titulo">Alta de libro</h3>
+      <form id="libros-form" action="#" method="post">
+        <div>
+          <label for="libro-titulo">Título</label>
+          <input type="text" id="libro-titulo" name="titulo" required>
+        </div>
+        <div>
+          <label for="libro-isbn">ISBN</label>
+          <input type="text" id="libro-isbn" name="isbn" required>
+        </div>
+        <div>
+          <label for="libro-precio">Precio</label>
+          <input type="number" id="libro-precio" name="precio" min="0" step="0.01">
+        </div>
+        <div>
+          <label for="libro-editorial">Editorial</label>
+          <select id="libro-editorial" name="editorial">
+            <option value="" disabled selected>Seleccioná una editorial</option>
+            <option value="ed1">Editorial Ejemplo Uno</option>
+            <option value="ed2">Editorial Ejemplo Dos</option>
+          </select>
+        </div>
+        <div>
+          <label for="libro-genero">Género</label>
+          <select id="libro-genero" name="genero">
+            <option value="">Sin clasificar</option>
+            <option value="gen1">Fábula (ejemplo)</option>
+            <option value="gen2">Cuento (ejemplo)</option>
+          </select>
+        </div>
+        <div>
+          <label for="libro-autores">Autores</label>
+          <select id="libro-autores" name="autores" multiple>
+            <option value="au1">Antoine de Saint-Exupéry (ejemplo)</option>
+            <option value="au2">Autora Ejemplo (ejemplo)</option>
+          </select>
+        </div>
+        <button type="button" id="libros-agregar-boton">Agregar libro</button>
+      </form>
+      <p id="libros-exito" role="status" hidden>Libro agregado correctamente (mensaje de ejemplo).</p>
+      <p id="libros-error" role="alert" hidden>No se pudo agregar el libro: revisá los campos (mensaje de ejemplo).</p>
+
+      <h3 id="libros-listado-titulo">Listado de libros registrados</h3>
+      <table id="libros-tabla">
+        <caption>Libros registrados (datos de ejemplo)</caption>
+        <thead>
+          <tr>
+            <th scope="col">Título</th>
+            <th scope="col">ISBN</th>
+            <th scope="col">Editorial</th>
+            <th scope="col">Género</th>
+            <th scope="col">Autores</th>
+            <th scope="col">Precio</th>
+          </tr>
+        </thead>
+        <tbody id="libros-lista">
+          <tr>
+            <td>El Principito (ejemplo)</td>
+            <td>978-0156012195</td>
+            <td>Editorial Ejemplo Uno</td>
+            <td>Fábula</td>
+            <td>Antoine de Saint-Exupéry (ejemplo)</td>
+            <td>$5000.00</td>
+          </tr>
+          <tr>
+            <td>Cuentos reunidos (ejemplo)</td>
+            <td>978-0000000002</td>
+            <td>Editorial Ejemplo Dos</td>
+            <td>Sin clasificar</td>
+            <td>Autora Ejemplo (ejemplo)</td>
+            <td>$3200.50</td>
+          </tr>
+        </tbody>
+      </table>
+      <p id="libros-vacio" role="status" hidden>No hay libros registrados todavía.</p>
+    </section>
+
+    <!-- Clientes -->
+    <section id="clientes" aria-labelledby="clientes-titulo">
+      <h2 id="clientes-titulo">Clientes</h2>
+      <p><strong>Maqueta: sin funcionamiento todavía.</strong></p>
+
+      <h3 id="clientes-form-titulo">Alta de cliente</h3>
+      <form id="clientes-form" action="#" method="post">
+        <div>
+          <label for="cliente-nombre">Nombre completo</label>
+          <input type="text" id="cliente-nombre" name="nombre" required>
+        </div>
+        <div>
+          <label for="cliente-email">Email</label>
+          <input type="email" id="cliente-email" name="email" required>
+        </div>
+        <button type="button" id="clientes-agregar-boton">Agregar cliente</button>
+      </form>
+      <p id="clientes-exito" role="status" hidden>Cliente agregado correctamente (mensaje de ejemplo).</p>
+      <p id="clientes-error" role="alert" hidden>No se pudo agregar el cliente: revisá los campos (mensaje de ejemplo).</p>
+
+      <h3 id="clientes-listado-titulo">Listado de clientes registrados</h3>
+      <table id="clientes-tabla">
+        <caption>Clientes registrados (datos de ejemplo)</caption>
+        <thead>
+          <tr>
+            <th scope="col">Nombre completo</th>
+            <th scope="col">Email</th>
+          </tr>
+        </thead>
+        <tbody id="clientes-lista">
+          <tr>
+            <td>María García (ejemplo)</td>
+            <td>maria.garcia@ejemplo.com</td>
+          </tr>
+          <tr>
+            <td>Juan Pérez (ejemplo)</td>
+            <td>juan.perez@ejemplo.com</td>
+          </tr>
+        </tbody>
+      </table>
+      <p id="clientes-vacio" role="status" hidden>No hay clientes registrados todavía.</p>
+    </section>
+
+    <!-- Ventas -->
+    <section id="ventas" aria-labelledby="ventas-titulo">
+      <h2 id="ventas-titulo">Ventas</h2>
+      <p><strong>Maqueta: sin funcionamiento todavía.</strong></p>
+
+      <div>
+        <label for="venta-cliente">Cliente</label>
+        <select id="venta-cliente" name="cliente">
+          <option value="" disabled selected>Seleccioná un cliente</option>
+          <option value="cl1">María García (ejemplo)</option>
+          <option value="cl2">Juan Pérez (ejemplo)</option>
+        </select>
+      </div>
+
+      <h3 id="ventas-renglones-titulo">Renglones de la venta</h3>
+      <div id="ventas-renglon-form">
+        <label for="renglon-libro">Libro</label>
+        <select id="renglon-libro" name="libro">
+          <option value="" disabled selected>Seleccioná un libro</option>
+          <option value="li1">El Principito (ejemplo)</option>
+          <option value="li2">Cuentos reunidos (ejemplo)</option>
+        </select>
+        <label for="renglon-cantidad">Cantidad</label>
+        <input type="number" id="renglon-cantidad" name="cantidad" min="1" step="1" value="1">
+        <button type="button" id="ventas-agregar-renglon-boton">Agregar renglón</button>
+      </div>
+
+      <table id="ventas-renglones-tabla">
+        <caption>Renglones de la venta actual (datos de ejemplo)</caption>
+        <thead>
+          <tr>
+            <th scope="col">Libro</th>
+            <th scope="col">Cantidad</th>
+            <th scope="col">Precio unitario</th>
+            <th scope="col">Subtotal</th>
+            <th scope="col">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="ventas-renglones">
+          <tr>
+            <td>El Principito (ejemplo)</td>
+            <td>2</td>
+            <td>$5000.00</td>
+            <td>$10000.00</td>
+            <td><button type="button" id="ventas-quitar-renglon-1">Quitar renglón</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <p id="ventas-renglones-vacio" role="status" hidden>No hay renglones en la venta actual.</p>
+
+      <h3 id="ventas-resumen-titulo">Resumen de la venta</h3>
+      <div id="ventas-resumen">
+        <p>Total: <span id="ventas-total">$10000.00 (ejemplo)</span></p>
+      </div>
+      <button type="button" id="ventas-confirmar-boton">Confirmar venta</button>
+      <p id="ventas-exito" role="status" hidden>Venta confirmada correctamente (mensaje de ejemplo).</p>
+      <p id="ventas-error" role="alert" hidden>No se pudo confirmar la venta: revisá cliente y renglones (mensaje de ejemplo).</p>
+    </section>
+
+    <!-- Historial -->
+    <section id="historial" aria-labelledby="historial-titulo">
+      <h2 id="historial-titulo">Historial</h2>
+      <p><strong>Maqueta: sin funcionamiento todavía.</strong></p>
+
+      <table id="historial-tabla">
+        <caption>Ventas confirmadas (datos de ejemplo)</caption>
+        <thead>
+          <tr>
+            <th scope="col">Identificador</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Total</th>
+            <th scope="col">Detalle</th>
+          </tr>
+        </thead>
+        <tbody id="historial-lista">
+          <tr>
+            <td>V-001 (ejemplo)</td>
+            <td>2026-10-01 (ejemplo)</td>
+            <td>María García (ejemplo)</td>
+            <td>$10000.00 (ejemplo)</td>
+            <td><a href="#historial-detalle-001">Ver detalle</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <p id="historial-vacio" role="status" hidden>No hay ventas registradas todavía.</p>
+
+      <details id="historial-detalle-001">
+        <summary>Detalle de la venta V-001 (ejemplo)</summary>
+        <table id="historial-detalle-001-tabla">
+          <caption>Renglones de la venta V-001 (ejemplo)</caption>
+          <thead>
+            <tr>
+              <th scope="col">Libro</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Precio unitario</th>
+              <th scope="col">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="historial-detalle-001-renglones">
+            <tr>
+              <td>El Principito (ejemplo)</td>
+              <td>2</td>
+              <td>$5000.00</td>
+              <td>$10000.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    <p>Parcial 1 — Frontend de librería. Maqueta Etapa 1 (Ejercicio 1): estructura HTML estática.</p>
+    <!-- Pendiente Ej.6: README con casos manuales y persistencia -->
+  </footer>
+  <!-- Pendiente Ej.2: identidad visual y adaptación CSS -->
+  <!-- Pendiente Ej.3: datos en JS, catálogo generado y filtro -->
+  <!-- Pendiente Ej.4: validaciones y preventDefault -->
+  <!-- Pendiente Ej.5: cálculos e historial inmutable -->
+  <!-- Pendiente Ej.6: localStorage y README de casos manuales -->
+</body>
+</html>
