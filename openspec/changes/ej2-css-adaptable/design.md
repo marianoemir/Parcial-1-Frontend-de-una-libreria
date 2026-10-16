@@ -1,0 +1,42 @@
+# Design
+
+## Context
+
+Ver `proposal.md` (Why) para la motivación. Estado actual verificado de forma read-only: `index.html` es una página única con 5 secciones (`#catalogo`, `#libros`, `#clientes`, `#ventas`, `#historial`), casi sin clases y con `aria-current="page"` fijo en el enlace a Catálogo; `css/styles.css` contiene una sola línea de comentario pendiente del Ej.2; `js/app.js` es un comentario sin lógica; las main specs del Ej.1 (`ej1-vistas-navegacion`, `ej1-semantica-formularios`) fijan semántica, `id` y mensajes que no se tocan. Restricciones duras: vanilla total (sin CDNs, fuentes remotas, npm ni preprocesadores), apertura con doble clic, sin cambios de `id`, sin quitar textos «Maqueta: sin funcionamiento todavía», planificación solamente en este change.
+
+## Goals / Non-Goals
+
+**Goals:**
+
+- Definir cómo se organiza el CSS (un solo `css/styles.css` con variables y secciones comentadas) y qué clases mínimas se agregan al HTML.
+- Dejar decididos el mecanismo de maquetación (Grid para catálogo, Flexbox para nav y formularios), el tratamiento de tablas, foco, mensajes, `hidden` y vista actual sin JS.
+- Acotar el `apply` a edición de CSS + agregado de `class` + envoltorios de tablas + borrado de `PROMPT1.md`.
+
+**Non-Goals:**
+
+- No se diseña JS, ni datos, ni validaciones, ni `localStorage`, ni README (Ej.3–6).
+- No se rediseña la semántica HTML del Ej.1 ni se agregan imágenes.
+
+## Decisions
+
+- **Un solo archivo `css/styles.css` estructurado por secciones.** Alternativa considerada: dividir en `base.css` + `layout.css` + `components.css`. Se descarta por sobredimensionado: el proyecto es una página única vanilla que abre con doble clic y el equipo lo mantiene entre todos; un archivo con variables `:root`, reset mínimo, base, layout y componentes comentados es más simple de entregar y revisar. Si en `apply` el archivo superara ~600 líneas, se permite extraer `css/responsive.css` sin cambiar specs.
+- **Sistema de clases utilitario-mínimo con prefijos por rol** (p. ej. `menu-principal`, `tarjeta`, `campo`, `boton`, `mensaje`, `tabla-scroll`, `contenedor`; la navegación usa `menu-principal`, no `nav-principal`, que colisionaría con el `id="nav-principal"` existente). Alternativa: clases BEM estrictas o sin clases (selectores por etiqueta). Se elige lo intermedio: selectores por etiqueta para base tipográfica y clases reutilizadas solo donde hay elementos equivalentes, porque el HTML hoy casi no tiene clases y el Ej.2 exige reutilización explícita. Todas las clases nuevas se declaran en `tasks.md`.
+- **Grid para la lista del catálogo (`#catalogo-lista`), Flexbox para navegación y formularios.** Grid con `auto-fill/minmax` da fichas que colapsan a 1 columna a 320 px y varias a 1280 px sin media queries frágiles; Flexbox con `flex-wrap` basta para nav y filas de formulario. Una sola media query de refuerzo (~640 px) ajusta paddings y tamaños. Tablas quedan fuera del layout: van en envoltorios.
+- **Tablas: envoltorio `.tabla-scroll` con `overflow-x:auto` agregado en el HTML alrededor de cada `table`.** Es la única adición estructural al HTML además de `class`. Sin esto el scroll propio exigido por la consigna es imposible solo con CSS sobre la tabla en todos los navegadores; el envoltorio no cambia `id`, semántica ni textos.
+- **Guardia `[hidden]{display:none!important}` como primera regla de estado.** El riesgo es que reglas de `display` para tarjetas o mensajes anulen `hidden` y muestren mensajes que deben estar ocultos. La guardia lo impide por especificidad y se verifica por inspección + prueba manual (quitar/poner `hidden` en consola sin guardar cambios).
+- **Foco con `:focus-visible` de alto contraste (contorno grueso + desplazamiento) sin eliminar el contorno por defecto en otros casos.** Los mensajes combinan color + texto real («No se pudo…» / «…correctamente…») + borde/icono tipográfico + prefijo visual aportado por CSS (`.mensaje-error::before { content: "Error: " }` / `.mensaje-exito::before { content: "Éxito: " }`, sin cambiar los textos del HTML) para no depender solo del color.
+- **Vista actual sin JS: resaltado de `section:target` como marca visible + `aria-current="page"` fijo en Catálogo solo para lectores de pantalla.** Decisión registrada (exigida por el change): con 5 secciones apiladas en una página y sin JS, no existe forma robusta de mover `aria-current` al navegar; por eso el enlace con `aria-current` NO lleva aspecto fuerte de «activo» (estilo neutro, sin presentarse como posición real) y la marca visible es el resaltado de la sección destino (`section:target`: borde + fondo + `scroll-margin-top`), sin tocar `id` ni agregar JS, y funciona con doble clic en todos los navegadores. `aria-current="page"` queda fijo en Catálogo como estado inicial para tecnologías de asistencia, no como indicador visual. Límites asumidos: al cargar (sin fragmento) ninguna sección está `:target` y no hay marca visible; el resaltado real y continuo por scroll llegará con JS en Ej.3–5 (scroll-spy, fuera de alcance). Alternativas descartadas: `:has()` para teñir el enlace del nav según la sección `:target` (soporte y complejidad innecesarios para el parcial) y duplicar navegación por vista (rompería la estructura del Ej.1).
+- **Sin imágenes.** Se cumple la consigna por ausencia: cero recursos gráficos implica cero `alt` incorrectos y cero remotos. Si `apply` detectara necesidad de alguna, la regla de la spec la obliga local con `alt` correcto.
+- **Borrado de `PROMPT1.md` como última tarea del `apply`.** Es andamiaje del Ej.1, no entrega; se verifica con listado de raíz y reapertura con doble clic.
+
+## Risks / Trade-offs
+
+- [Riesgo] Una regla de `display` o `visibility` oculta un mensaje que debería verse, o muestra uno con `hidden` → Mitigación: guardia `[hidden]` + checklist de mensajes en `tasks.md` (cada mensaje se muestra quitando `hidden` solo en memoria y se confirma visible).
+- [Riesgo] A 320 px una tabla o un formulario igual desborda por palabras largas o `min-width` implícitos → Mitigación: `max-width:100%`, `min-width:0` en items flex/grid, `overflow-wrap:break-word` y prueba manual a 320 px exigida por tarea.
+- [Riesgo] Contraste insuficiente de la paleta elegida → Mitigación: elegir pares texto/fondo con contraste AA y verificación visual en la tarea de identidad (sin herramienta externa obligatoria; basta inspección en ambos anchos).
+- [Riesgo] `section:target` se percibe como resaltado débil → Mitigación: estilo evidente (borde + fondo + `scroll-margin-top`) documentado como solución transitoria hasta el JS de Ej.3–5.
+- [Trade-off] Un solo CSS grande vs. varios pequeños: se prioriza entrega simple con doble clic frente a modularidad ideal.
+
+## Migration Plan
+
+No hay despliegue: el `apply` edita archivos locales sin pasos intermedios. Orden: (1) agregar al HTML las clases declaradas y los envoltorios `.tabla-scroll` (tasks 1.2 y 3.1; sin tocar `id` ni textos), (2) escribir `css/styles.css` (base en 1.1, componentes en 1.3–1.4, maquetación en 2.1), (3) comprobar 320/1280, teclado, mensajes y `hidden`, (4) borrar `PROMPT1.md`, (5) reabrir con doble clic como verificación final. Las comprobaciones manuales las confirma el usuario. Rollback: `git checkout -- index.html css/styles.css` y restaurar `PROMPT1.md` desde git antes del commit (el change no commitea).
