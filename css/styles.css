@@ -1,1 +1,525 @@
-/* Pendiente Ej.2: identidad visual y adaptación CSS */
+/* Ejercicio 2: identidad visual y adaptación CSS (vanilla, local, sin remotos) */
+
+/* 1. Paleta, tipografía y espaciado */
+:root {
+  --color-fondo: #f6f1e9;
+  --color-superficie: #ffffff;
+  --color-texto: #1a1a1a;
+  --color-texto-suave: #4b5563;
+  --color-primario: #0b5cad;
+  --color-primario-oscuro: #084a8c;
+  --color-acento: #9a3412;
+  --color-borde: #d0d7de;
+  --color-borde-campo: #7d8696;
+  --color-marca-fondo: #e8f1fb;
+  --color-exito-texto: #14532d;
+  --color-exito-fondo: #e6f4ea;
+  --color-exito-borde: #1a7f37;
+  --color-error-texto: #7f1d1d;
+  --color-error-fondo: #fdecea;
+  --color-error-borde: #b42318;
+  --color-foco: #0b5cad;
+  --color-foco-sobre-oscuro: #ffffff;
+  --color-tabla-encabezado-fondo: #dbe7f3;
+  --color-tabla-fila-alterna: #eef3f8;
+  --color-boton-hover-fondo: #d3e3f5;
+  --color-primario-muy-oscuro: #063a6e;
+  --fuente-sistema: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fuente-titulos: Georgia, "Times New Roman", serif;
+  --espacio-xs: 0.25rem;
+  --espacio-sm: 0.5rem;
+  --espacio-md: 1rem;
+  --espacio-lg: 1.5rem;
+  --espacio-xl: 2rem;
+  --ancho-maximo: 72rem;
+  --radio: 0.5rem;
+}
+
+/* 2. Base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-wrap: break-word;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fuente-sistema);
+  line-height: 1.5;
+  color: var(--color-texto);
+  background-color: var(--color-fondo);
+  max-width: 100%;
+}
+
+main,
+header,
+footer {
+  min-width: 0;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  font-family: var(--fuente-titulos);
+  letter-spacing: 0.01em;
+}
+
+h1 {
+  font-size: 1.75rem;
+}
+
+h2 {
+  font-size: 1.375rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+}
+
+p,
+li,
+label,
+caption {
+  overflow-wrap: break-word;
+}
+
+a {
+  color: var(--color-primario);
+}
+
+img {
+  max-width: 100%;
+}
+
+/* 3. Contenedor de página */
+.contenedor {
+  max-width: var(--ancho-maximo);
+  margin-inline: auto;
+  padding-inline: var(--espacio-md);
+  min-width: 0;
+}
+
+/* 3b. Alineación banner-tarjetas: el main no duplica el gutter (las
+   cards ya aportan su padding propio), así el borde exterior del banner
+   (body > header) y el de cada tarjeta (main > section) comparten el
+   mismo max-width centrado y el mismo gutter lateral (body) a 320 px
+   y a 1280 px. */
+body {
+  padding-inline: var(--espacio-sm);
+}
+
+main.contenedor {
+  padding-inline: 0;
+}
+
+main > section {
+  margin-inline: 0;
+}
+
+/* 4. Navegación con Flexbox + header como banner (no sticky) */
+body > header {
+  background-color: var(--color-primario-oscuro);
+  color: #ffffff;
+  border-radius: var(--radio);
+  margin-block: var(--espacio-md);
+  padding-block: var(--espacio-lg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+body > header h1 {
+  color: #ffffff;
+  margin: 0 0 var(--espacio-md);
+}
+
+/* Foco visible sobre fondo oscuro: contorno claro. */
+body > header :focus-visible {
+  outline-color: var(--color-foco-sobre-oscuro);
+}
+
+.menu-principal ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-principal a {
+  display: inline-block;
+  padding: var(--espacio-sm) var(--espacio-md);
+  border: 1px solid var(--color-borde);
+  border-radius: 9999px;
+  background-color: var(--color-superficie);
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.menu-principal a:hover {
+  background-color: var(--color-marca-fondo);
+  border-color: var(--color-primario);
+  color: var(--color-primario-oscuro);
+}
+
+.menu-principal a:active {
+  background-color: var(--color-boton-hover-fondo);
+  border-color: var(--color-primario-oscuro);
+  color: var(--color-primario-oscuro);
+}
+
+/* aria-current fijo en Catálogo: referencia para lectores de pantalla,
+   estilo neutro a propósito (sin aspecto fuerte de activo). */
+.menu-principal a[aria-current="page"] {
+  text-decoration: underline;
+  font-weight: normal;
+  background-color: var(--color-superficie);
+  color: var(--color-primario);
+}
+
+/* 4b. Secciones como tarjetas con espaciado vertical consistente.
+   Borde de 2px desde el reposo para que :target cambie solo el color
+   (mismo grosor, sin desplazar el layout). */
+main > section {
+  background-color: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: var(--espacio-lg);
+  margin-block: var(--espacio-lg);
+  min-width: 0;
+  scroll-margin-top: var(--espacio-md);
+}
+
+main > section > h2:first-child {
+  margin-top: 0;
+  border-left: 0.375rem solid var(--color-acento);
+  padding-left: var(--espacio-sm);
+}
+
+/* 5. Catálogo con Grid */
+#catalogo-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--espacio-md);
+  margin-top: var(--espacio-md);
+  min-width: 0;
+}
+
+/* 6. Formularios con Flexbox: etiqueta sobre el campo, columnas adaptables */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-sm);
+  min-width: 0;
+}
+
+form label,
+#ventas > div > label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--espacio-xs);
+}
+
+form > div {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  min-width: 0;
+}
+
+#catalogo-buscador-form {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+#catalogo-buscador-form > label {
+  flex: 1 1 100%;
+  margin-bottom: 0;
+}
+
+#catalogo-buscador-form > .campo {
+  flex: 1 1 12rem;
+}
+
+/* 6b. Alta de libros/clientes: columnas adaptables en fila con wrap.
+    Cada form > div es una columna flexible (etiqueta sobre el campo);
+    el botón queda a ancho de contenido con align-self + margin-top
+    (sin wrapper de 100%). */
+#libros-form,
+#clientes-form {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+#libros-form > div,
+#clientes-form > div {
+  flex: 1 1 14rem;
+}
+
+#libros-form > button,
+#clientes-form > button {
+  flex: 0 0 auto;
+  width: auto;
+  align-self: flex-start;
+  margin-top: var(--espacio-sm);
+}
+
+#ventas-renglon-form {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  align-items: flex-end;
+  min-width: 0;
+}
+
+#ventas-renglon-form > label {
+  flex: 1 1 100%;
+}
+
+/* 6c. El renglón de venta envuelve en filas: cada label ocupa la línea
+   completa para quedar sobre su campo (patrón form label); sus .campo
+   no fuerzan width 100% (override con scope) y el botón va a su medida. */
+#ventas-renglon-form > .campo {
+  width: auto;
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+#ventas-renglon-form > button {
+  flex: 0 0 auto;
+}
+
+/* Margen entre el bloque de renglón y la tabla de renglones. */
+#ventas-renglon-form + .tabla-scroll {
+  margin-top: var(--espacio-md);
+}
+
+/* 7. Componentes: tarjeta */
+.tarjeta {
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: var(--espacio-md);
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.tarjeta h3 {
+  margin-top: 0;
+}
+
+.tarjeta p {
+  margin: var(--espacio-xs) 0;
+  color: var(--color-texto-suave);
+}
+
+.tarjeta p:last-child {
+  color: var(--color-texto);
+  font-weight: 700;
+}
+
+/* 8. Componentes: campos (borde --color-borde-campo #7d8696: ~3.7:1
+   sobre superficie blanca, cumple 3:1 mínimo; sin tocar aledaños). */
+input.campo,
+select.campo {
+  font: inherit;
+  color: var(--color-texto);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde-campo);
+  border-radius: var(--radio);
+  padding: var(--espacio-sm) var(--espacio-md);
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* 9. Componentes: botones */
+.boton {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: var(--espacio-sm) var(--espacio-md);
+  background-color: var(--color-superficie);
+  color: var(--color-texto);
+  max-width: 100%;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.boton:hover {
+  background-color: var(--color-marca-fondo);
+  border-color: var(--color-primario);
+  color: var(--color-primario-oscuro);
+}
+
+.boton:active {
+  background-color: var(--color-boton-hover-fondo);
+  border-color: var(--color-primario-oscuro);
+  color: var(--color-primario-oscuro);
+}
+
+.boton-primario {
+  background-color: var(--color-primario);
+  border-color: var(--color-primario);
+  color: #ffffff;
+}
+
+.boton-primario:hover {
+  background-color: var(--color-primario-oscuro);
+  border-color: var(--color-primario-oscuro);
+  color: #ffffff;
+}
+
+.boton-primario:active {
+  background-color: var(--color-primario-muy-oscuro);
+  border-color: var(--color-primario-muy-oscuro);
+  color: #ffffff;
+}
+
+/* 10. Componentes: mensajes (texto explícito, no solo color) */
+.mensaje {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: var(--espacio-sm) var(--espacio-md);
+  background-color: var(--color-superficie);
+  overflow-wrap: break-word;
+}
+
+.mensaje-error {
+  color: var(--color-error-texto);
+  background-color: var(--color-error-fondo);
+  border-color: var(--color-error-borde);
+  border-left-width: 0.375rem;
+}
+
+.mensaje-exito {
+  color: var(--color-exito-texto);
+  background-color: var(--color-exito-fondo);
+  border-color: var(--color-exito-borde);
+  border-left-width: 0.375rem;
+}
+
+/* Prefijos visuales aportados por CSS; los textos del HTML no cambian. */
+.mensaje-error::before {
+  content: "Error: ";
+  font-weight: bold;
+}
+
+.mensaje-exito::before {
+  content: "Éxito: ";
+  font-weight: bold;
+}
+
+/* 11. Tablas con scroll propio */
+.tabla-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  min-width: 0;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background-color: var(--color-superficie);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+th,
+td {
+  border: 1px solid var(--color-borde);
+  padding: var(--espacio-sm) var(--espacio-md);
+  text-align: left;
+  overflow-wrap: break-word;
+}
+
+caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-texto);
+  padding: var(--espacio-sm) var(--espacio-md);
+}
+
+thead th {
+  background-color: var(--color-tabla-encabezado-fondo);
+  color: var(--color-texto);
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--color-tabla-fila-alterna);
+}
+
+/* 12. Estados */
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+/* Marca visible de la sección destino sin JavaScript.
+   Solo cambia color de borde y fondo: el grosor (2px) ya existe en el
+   reposo (main > section), así no se desplaza el layout. */
+section:target {
+  border-color: var(--color-primario);
+  border-radius: var(--radio);
+  background-color: var(--color-marca-fondo);
+  scroll-margin-top: var(--espacio-md);
+}
+
+/* 13. Refuerzo para pantallas angostas (~640 px) */
+@media (max-width: 40rem) {
+  .contenedor {
+    padding-inline: var(--espacio-sm);
+  }
+
+  #catalogo-lista {
+    grid-template-columns: 1fr;
+  }
+
+  #catalogo-buscador-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #catalogo-buscador-form > .campo {
+    flex: 0 0 auto;
+  }
+
+  form > div {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .menu-principal ul {
+    gap: var(--espacio-xs);
+  }
+}
+
+/* 14. Accesibilidad de movimiento: sin transiciones ni animaciones. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

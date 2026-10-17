@@ -15,6 +15,11 @@ El sistema SHALL presentar paleta propia con variables CSS, tipografía de pila 
 - **WHEN** se recorren las 5 secciones en un navegador
 - **THEN** colores, tipografía, espaciado, tarjetas, campos y botones se ven coherentes y sin aspecto de navegador por defecto en tarjetas, campos y botones
 
+#### Scenario: Jerarquía visual
+
+- **WHEN** se recorren las 5 vistas en un navegador
+- **THEN** header, secciones, tarjetas, formularios y tablas se distinguen con jerarquía visual propia y sin aspecto de navegador por defecto
+
 #### Scenario: Paleta con variables CSS
 
 - **WHEN** se inspecciona el CSS
@@ -32,7 +37,7 @@ El CSS SHALL vivir en archivos locales bajo `css/` sin estilos inline ni element
 #### Scenario: Id intactos
 
 - **WHEN** se comparan los `id` del HTML con los del Ejercicio 1
-- **THEN** todos los `id` existen sin cambios y los textos «Maqueta: sin funcionamiento todavía» siguen presentes
+- **THEN** todos los `id` existen sin cambios y los textos «Maqueta: sin funcionamiento todavía» de cada sección siguen presentes (solo se quitan el párrafo del header y la leyenda del footer indicados en la propuesta)
 
 ### Requirement: Organización con Flexbox o Grid
 

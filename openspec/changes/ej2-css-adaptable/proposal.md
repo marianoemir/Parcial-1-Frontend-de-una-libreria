@@ -7,8 +7,10 @@ El Ejercicio 1 dejó la estructura HTML completa pero sin presentación: `css/st
 ## What Changes
 
 - Identidad visual propia y coherente solo con CSS: paleta definida con variables CSS, tipografía de pila del sistema, escala de espaciado, tarjetas para el catálogo, formularios y botones uniformes en las 5 vistas (`#catalogo`, `#libros`, `#clientes`, `#ventas`, `#historial`).
+- Refinamiento visual: jerarquía y acabado más cuidados en header, secciones, tarjetas, formularios, botones y tablas, según la dirección visual definida en `design.md`.
+- Se quitan del HTML el párrafo del header «Maqueta Etapa 1 (Ejercicio 1): estructura HTML estática, sin funcionamiento todavía.» y la leyenda «Maqueta Etapa 1 (Ejercicio 1): estructura HTML estática.» del footer (queda «Parcial 1 — Frontend de librería.»). Los «Maqueta: sin funcionamiento todavía» de cada sección SE CONSERVAN y ningún `id` cambia.
 - CSS externo en archivos locales bajo `css/` (se mantiene `css/styles.css` como entrada; se permite dividir en un segundo archivo local solo si se justifica en `design.md`). Sin estilos inline y sin `<style>` en el HTML. Sin librerías, frameworks, CDNs, Google Fonts ni recursos remotos.
-- Clases reutilizables mínimas agregadas al HTML para elementos equivalentes (tarjetas, campos, botones, mensajes, contenedores de tablas). **Se agregan clases al HTML**: solo atributos `class` nuevos (la navegación usa `menu-principal`, no `nav-principal`, que colisionaría con el `id="nav-principal"` existente); ningún `id` existente se cambia, ningún texto «Maqueta: sin funcionamiento todavía» se quita, ninguna etiqueta semántica se altera.
+- Clases reutilizables mínimas agregadas al HTML para elementos equivalentes (tarjetas, campos, botones, mensajes, contenedores de tablas). **Se agregan clases al HTML**: solo atributos `class` nuevos (la navegación usa `menu-principal`, no `nav-principal`, que colisionaría con el `id="nav-principal"` existente); ningún `id` existente se cambia, los textos «Maqueta: sin funcionamiento todavía» de cada sección se conservan (solo se quitan los del header y footer indicados arriba), ninguna etiqueta semántica se altera.
 - Organización del contenido con Flexbox o Grid (a decidir en `design.md`): navegación, lista de fichas del catálogo y formularios adaptan su disposición según el ancho.
 - Comprobación a 320 px y 1280 px: textos y controles legibles, sin scroll horizontal de la página; cada tabla SHALL desplazarse dentro de su propio contenedor (envoltorios con scroll propio agregados en el HTML con clases).
 - Accesibilidad visual sin JS: foco visible en todos los controles, navegación por teclado intacta, mensajes de error y estado con texto explícito (no solo color), el CSS no SHALL anular el atributo `hidden` (regla de guardia `[hidden]`).
@@ -26,10 +28,10 @@ El Ejercicio 1 dejó la estructura HTML completa pero sin presentación: `css/st
 
 ### Modified Capabilities
 
-- Ninguna. Las capacidades `ej1-vistas-navegacion` y `ej1-semantica-formularios` no cambian requisitos: el HTML conserva sus `id`, su semántica y sus textos; este change solo agrega `class` y CSS.
+- Ninguna. Las capacidades `ej1-vistas-navegacion` y `ej1-semantica-formularios` no cambian requisitos: el HTML conserva sus `id`, su semántica y los textos «Maqueta: sin funcionamiento todavía» de cada sección (solo se quitan los del header y footer indicados en What Changes); este change solo agrega `class` y CSS salvo esos dos textos.
 
 ## Impact
 
-- Archivos afectados en `apply` (este change solo planifica, no los toca): `css/styles.css` (contenido completo), `index.html` (solo agregado de atributos `class` y envoltorios de tablas con clase; sin cambios de `id` ni textos), posible segundo CSS local si `design.md` lo justifica, y eliminación de `PROMPT1.md`.
+- Archivos afectados en `apply` (este change solo planifica, no los toca): `css/styles.css` (contenido completo), `index.html` (solo agregado de atributos `class` y envoltorios de tablas con clase, más el retiro de los dos textos de maqueta del header y footer indicados en What Changes; sin cambios de `id` ni de los textos de cada sección), posible segundo CSS local si `design.md` lo justifica, y eliminación de `PROMPT1.md`.
 - Sin dependencias nuevas, sin cambios de comportamiento JS, sin cambios en las specs del Ej.1.
 - Supuestos: (1) no se agregan imágenes; (2) se acepta `:target` como mecanismo de «vista actual» sin JS con los límites documentados en `design.md`; (3) basta con Chromium/Firefox de escritorio + vista móvil a 320 px para comprobar (doble clic, sin servidor).
