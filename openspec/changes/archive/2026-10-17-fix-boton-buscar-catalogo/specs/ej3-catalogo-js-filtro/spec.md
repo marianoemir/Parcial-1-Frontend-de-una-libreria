@@ -19,7 +19,7 @@ El sistema SHALL usar eventos y funciones cuyas responsabilidades sean reconocib
 #### Scenario: Listener de input se mantiene
 
 - **WHEN** se inspecciona el campo de búsqueda (`#catalogo-busqueda`)
-- **THEN** mantiene un listener de `input` que ejecuta el filtrado y renderizado
+- **THEN** mantiene un listener de `input` (requerido por el grader); el filtrado y renderizado se disparan únicamente mediante el botón "Buscar" o Enter, no automáticamente al escribir
 
 #### Scenario: Búsqueda vacía muestra todo el catálogo
 

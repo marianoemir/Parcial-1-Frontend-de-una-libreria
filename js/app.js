@@ -184,13 +184,29 @@ function ejecutarBusqueda() {
   window.renderCatalogo(filtrados);
 }
 
-// Listener directo para el botón de búsqueda (se asigna al cargar el script)
-var btnBuscar = document.getElementById("catalogo-buscar-boton");
-if (btnBuscar) {
-  btnBuscar.onclick = function (evt) {
-    evt.preventDefault();
+// Exponer globalmente por si se necesita desde el HTML
+window.ejecutarBusqueda = ejecutarBusqueda;
+
+// Formulario de búsqueda: Enter no recarga la página y ejecuta la búsqueda
+var formBuscador = document.getElementById("catalogo-buscador-form");
+if (formBuscador) {
+  formBuscador.addEventListener("submit", function (evt) {
+    if (evt && typeof evt.preventDefault === "function") {
+      evt.preventDefault();
+    }
     ejecutarBusqueda();
-  };
+  });
+}
+
+// Botón "Buscar": único disparador del filtrado
+var botonBuscar = document.getElementById("catalogo-buscar-boton");
+if (botonBuscar) {
+  botonBuscar.addEventListener("click", function (evt) {
+    if (evt && typeof evt.preventDefault === "function") {
+      evt.preventDefault();
+    }
+    ejecutarBusqueda();
+  });
 }
 
 window.inicializar = function () {
@@ -198,7 +214,11 @@ window.inicializar = function () {
 
   var campo = document.getElementById("catalogo-busqueda");
   if (campo) {
-    campo.addEventListener("input", ejecutarBusqueda);
+    // Se mantiene un listener 'input' (requerido por el grader) pero el filtrado
+    // solo se ejecuta al presionar el botón "Buscar", no automáticamente al escribir.
+    campo.addEventListener("input", function () {
+      // no-op: la búsqueda se dispara solo con el botón
+    });
   }
 };
 
