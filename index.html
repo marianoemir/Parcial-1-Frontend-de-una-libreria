@@ -30,7 +30,7 @@
       <form id="catalogo-buscador-form" action="#" method="get">
         <label for="catalogo-busqueda" id="catalogo-busqueda-label">Buscar por título</label>
         <input type="search" id="catalogo-busqueda" name="busqueda" placeholder="Ej.: El principito" class="campo">
-        <button type="button" id="catalogo-buscar-boton" class="boton boton-primario">Buscar</button>
+        <button type="button" id="catalogo-buscar-boton" class="boton boton-primario" onclick="(function(){var c=document.getElementById('catalogo-busqueda');var t=c?c.value:'';var f=window.libros.filter(function(l){return l.titulo.toLowerCase().includes(t.trim().toLowerCase());});window.renderCatalogo(f);event.preventDefault();})()">Buscar</button>
       </form>
 
       <p id="catalogo-sin-resultados" role="status" hidden class="mensaje">No se encontraron libros con ese título (datos de ejemplo).</p>
