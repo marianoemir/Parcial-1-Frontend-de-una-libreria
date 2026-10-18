@@ -37,7 +37,7 @@ El CSS SHALL vivir en archivos locales bajo `css/` sin estilos inline ni element
 #### Scenario: Id intactos
 
 - **WHEN** se comparan los `id` del HTML con los del Ejercicio 1
-- **THEN** todos los `id` existen sin cambios y los textos «Maqueta: sin funcionamiento todavía» de cada sección siguen presentes (solo se quitan el párrafo del header y la leyenda del footer indicados en la propuesta)
+- **THEN** todos los `id` existen sin cambios; el texto «Maqueta: sin funcionamiento todavía.» permanece únicamente en las secciones Ventas e Historial (se quitó de Catálogo, Libros y Clientes porque ya funcionan, además del párrafo del header y la leyenda del footer ya retirados)
 
 ### Requirement: Organización con Flexbox o Grid
 

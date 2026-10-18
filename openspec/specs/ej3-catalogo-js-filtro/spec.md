@@ -109,3 +109,8 @@ El sistema SHALL usar eventos y funciones cuyas responsabilidades sean reconocib
 
 - **WHEN** el usuario presiona Enter dentro del campo de búsqueda
 - **THEN** no se recarga la página y se ejecuta la búsqueda (filtrado y renderizado)
+
+#### Scenario: Al cargar se respeta el texto restaurado en el buscador
+
+- **WHEN** se carga la página y el campo `#catalogo-busqueda` contiene texto restaurado por el navegador (autocompletado o restauración de sesión)
+- **THEN** el catálogo muestra únicamente los libros que coinciden con ese texto; cuando el campo está vacío, muestra todo el catálogo

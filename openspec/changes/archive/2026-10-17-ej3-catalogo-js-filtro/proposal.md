@@ -29,3 +29,12 @@ El Ejercicio 1 y 2 dejaron la estructura HTML completa y la presentación CSS li
 - Archivos afectados en `apply` (este change solo planifica, no los toca): `js/app.js` (contenido completo: modelo de datos, render y filtro); `index.html` (se reemplazan las dos fichas hardcodeadas de `#catalogo-lista` por el contenedor listo para render; ningún `id` ni texto de sección cambia).
 - Sin dependencias nuevas, sin fetch, sin servidor, sin `localStorage`, sin cambios de comportamiento CSS ni HTML fuera del contenedor del catálogo.
 - Supuestos: apertura con doble clic (`index.html` directo, sin servidor); los datos son ficticios y se pierden al recargar (sin persistencia en este Ej.3).
+
+## Correcciones posteriores (fix del botón Buscar)
+
+Tras archivar este change se corrigió el disparo del filtrado del catálogo, consolidado aquí desde el change `fix-boton-buscar-catalogo` (tareas 1.1 a 3.2 en `tasks.md`):
+
+- El botón `#catalogo-buscar-boton` combinaba un `onclick` inline con una propiedad `onclick` asignada en JS, y el filtro automático por `input` hacía que el botón pareciera no funcionar; además, las pruebas que verifican `addEventListener("click")` fallaban porque el botón se cableaba con `onclick = ...`.
+- Se unificó el manejo del evento en `ejecutarBusqueda()` y se cableó el clic del botón con `addEventListener("click", ...)` en `js/app.js`; se mantuvo el listener `input` sobre `#catalogo-busqueda` y se evitó la recarga de página al presionar Enter (`preventDefault()` en el `submit` del formulario de búsqueda).
+- Búsqueda vacía (o solo espacios) muestra todo el catálogo; búsqueda sin coincidencias muestra el mensaje correspondiente.
+- Archivos afectados: `index.html` (botón `#catalogo-buscar-boton`) y `js/app.js` (bloque de eventos del buscador). El requisito «Eventos y funciones con responsabilidades reconocibles» de `openspec/specs/ej3-catalogo-js-filtro/spec.md` se amplió para exigir lo anterior.
