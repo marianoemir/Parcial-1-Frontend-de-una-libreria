@@ -210,7 +210,7 @@ if (botonBuscar) {
 }
 
 window.inicializar = function () {
-  window.renderCatalogo(window.libros);
+  window.ejecutarBusqueda();
 
   var campo = document.getElementById("catalogo-busqueda");
   if (campo) {
@@ -283,10 +283,13 @@ window.validarLibro = function (datos) {
     errores.push("La editorial seleccionada no existe");
   }
 
-  if (!datos.autorIds || datos.autorIds.length === 0) {
+  var autorIds = (datos.autorIds || []).filter(function (aid) {
+    return aid !== "";
+  });
+  if (autorIds.length === 0) {
     errores.push("Seleccioná al menos un autor");
   } else {
-    datos.autorIds.forEach(function (aid) {
+    autorIds.forEach(function (aid) {
       var autorExiste = window.autores.some(function (au) { return au.id === aid; });
       if (!autorExiste) {
         errores.push("El autor " + aid + " no existe");
@@ -429,16 +432,21 @@ window.actualizarOpciones = function () {
   var autoresSelect = document.getElementById("libro-autores");
   var ventaClienteSelect = document.getElementById("venta-cliente");
 
-  function reconstruirSelect(select, items, placeholderText, placeholderValue) {
+  // modo "placeholder": opción inicial deshabilitada y seleccionada (editorial, venta-cliente)
+  // modo "inicial": opción inicial habilitada y seleccionada por defecto (género «Sin clasificar»)
+  // modo "sin-inicial": sin opción inicial; solo los ítems (autores, selector múltiple)
+  function reconstruirSelect(select, items, modo, textoInicial, valorInicial) {
     while (select.firstChild) {
       select.removeChild(select.firstChild);
     }
-    var ph = document.createElement("option");
-    ph.value = placeholderValue;
-    ph.textContent = placeholderText;
-    ph.disabled = true;
-    ph.selected = true;
-    select.add(ph);
+    if (modo !== "sin-inicial") {
+      var inicial = document.createElement("option");
+      inicial.value = valorInicial;
+      inicial.textContent = textoInicial;
+      inicial.disabled = (modo === "placeholder");
+      inicial.selected = true;
+      select.add(inicial);
+    }
     items.forEach(function (item) {
       var op = document.createElement("option");
       op.value = item.id;
@@ -447,10 +455,10 @@ window.actualizarOpciones = function () {
     });
   }
 
-  reconstruirSelect(editorialSelect, window.editoriales, "Seleccioná una editorial", "");
-  reconstruirSelect(generoSelect, window.generos, "Sin clasificar", "");
-  reconstruirSelect(autoresSelect, window.autores, "", "");
-  reconstruirSelect(ventaClienteSelect, window.clientes, "Seleccioná un cliente", "");
+  reconstruirSelect(editorialSelect, window.editoriales, "placeholder", "Seleccioná una editorial", "");
+  reconstruirSelect(generoSelect, window.generos, "inicial", "Sin clasificar", "");
+  reconstruirSelect(autoresSelect, window.autores, "sin-inicial", "", "");
+  reconstruirSelect(ventaClienteSelect, window.clientes, "placeholder", "Seleccioná un cliente", "");
 }
 
 // ============================================================
@@ -474,7 +482,10 @@ function configurarLibrosForm() {
     var autorIds = [];
     for (var i = 0; i < autoresSelect.options.length; i++) {
       if (autoresSelect.options[i].selected) {
-        autorIds.push(autoresSelect.options[i].value);
+        var valorAutor = autoresSelect.options[i].value;
+        if (valorAutor !== "") {
+          autorIds.push(valorAutor);
+        }
       }
     }
 
@@ -496,7 +507,7 @@ function configurarLibrosForm() {
 
     var nuevoLibro = {
       id: generarIdNuevo("li", window.libros),
-      titulo: datos.titulo,
+      titulo: datos.titulo.trim(),
       isbn: normalizarISBN(datos.isbn),
       editorialId: datos.editorialId,
       generoId: datos.generoId || null,
@@ -561,7 +572,7 @@ function configurarClientesForm() {
 
     var nuevoCliente = {
       id: generarIdNuevo("cl", window.clientes),
-      nombre: datos.nombre,
+      nombre: datos.nombre.trim(),
       email: datos.email.trim()
     };
 
