@@ -431,11 +431,21 @@ window.actualizarOpciones = function () {
   var generoSelect = document.getElementById("libro-genero");
   var autoresSelect = document.getElementById("libro-autores");
   var ventaClienteSelect = document.getElementById("venta-cliente");
+  var renglonLibroSelect = document.getElementById("renglon-libro");
 
-  // modo "placeholder": opción inicial deshabilitada y seleccionada (editorial, venta-cliente)
+  // modo "placeholder": opción inicial deshabilitada y seleccionada (editorial, cliente, libro de venta)
   // modo "inicial": opción inicial habilitada y seleccionada por defecto (género «Sin clasificar»)
   // modo "sin-inicial": sin opción inicial; solo los ítems (autores, selector múltiple)
-  function reconstruirSelect(select, items, modo, textoInicial, valorInicial) {
+  // Si el valor que estaba elegido sigue existiendo, se conserva la selección.
+  function reconstruirSelect(select, items, modo, textoInicial, valorInicial, etiqueta) {
+    if (!select) return;
+    var valoresPrevios = [];
+    for (var i = 0; i < select.options.length; i++) {
+      if (select.options[i].selected && select.options[i].value !== "") {
+        valoresPrevios.push(select.options[i].value);
+      }
+    }
+
     while (select.firstChild) {
       select.removeChild(select.firstChild);
     }
@@ -450,7 +460,10 @@ window.actualizarOpciones = function () {
     items.forEach(function (item) {
       var op = document.createElement("option");
       op.value = item.id;
-      op.textContent = item.nombre;
+      op.textContent = etiqueta ? etiqueta(item) : item.nombre;
+      if (valoresPrevios.indexOf(item.id) !== -1) {
+        op.selected = true;
+      }
       select.add(op);
     });
   }
@@ -459,7 +472,10 @@ window.actualizarOpciones = function () {
   reconstruirSelect(generoSelect, window.generos, "inicial", "Sin clasificar", "");
   reconstruirSelect(autoresSelect, window.autores, "sin-inicial", "", "");
   reconstruirSelect(ventaClienteSelect, window.clientes, "placeholder", "Seleccioná un cliente", "");
-}
+  reconstruirSelect(renglonLibroSelect, window.libros, "placeholder", "Seleccioná un libro", "", function (libro) {
+    return libro.titulo + " ($" + Number(libro.precio).toFixed(2) + ")";
+  });
+};
 
 // ============================================================
 // Ej.4: Listener de envío del formulario de libros
@@ -516,6 +532,7 @@ function configurarLibrosForm() {
     };
 
     window.libros.push(nuevoLibro);
+    window.guardarEnLocalStorage();
     renderLibrosTabla();
     window.renderCatalogo(window.libros);
     actualizarOpciones();
@@ -577,6 +594,7 @@ function configurarClientesForm() {
     };
 
     window.clientes.push(nuevoCliente);
+    window.guardarEnLocalStorage();
     renderClientesTabla();
     actualizarOpciones();
 
@@ -622,3 +640,440 @@ document.addEventListener("DOMContentLoaded", window.inicializarEj4);
 // ============================================================
 // (Todas las tareas implementadas)
 // ============================================================
+
+// ============================================================
+// Ej.5: Venta simulada e historial (ids sincronizados con index.html)
+// ============================================================
+
+window.ventaEnCurso = {
+  renglones: []
+};
+
+window.historialVentas = window.historialVentas || [];
+
+// --- Utilidades ---
+
+function formatearImporte(valor) {
+  return "$" + Number(valor).toFixed(2);
+}
+
+function redondear2(valor) {
+  return Math.round(valor * 100) / 100;
+}
+
+// Devuelve el entero positivo representado por "valor", o null si no es válido
+// (vacío, cero, negativo, decimal o texto).
+function parsearCantidadEntera(valor) {
+  var texto = String(valor === undefined || valor === null ? "" : valor).trim();
+  if (!/^\d+$/.test(texto)) return null;
+  var n = parseInt(texto, 10);
+  return n > 0 ? n : null;
+}
+
+function mostrarMensajeVenta(tipo, texto) {
+  var errorEl = document.getElementById("ventas-error");
+  var exitoEl = document.getElementById("ventas-exito");
+  if (errorEl) { errorEl.hidden = true; errorEl.textContent = ""; }
+  if (exitoEl) { exitoEl.hidden = true; exitoEl.textContent = ""; }
+  var destino = tipo === "error" ? errorEl : exitoEl;
+  if (destino && texto) {
+    destino.textContent = texto;
+    destino.hidden = false;
+  }
+}
+
+function buscarLibroPorId(libroId) {
+  return window.libros.find(function (l) { return l.id === libroId; });
+}
+
+// --- Renglones de la venta en curso ---
+
+window.agregarRenglonVenta = function (libroId, cantidadDeseada) {
+  var libro = buscarLibroPorId(libroId);
+  if (!libro) {
+    mostrarMensajeVenta("error", "Seleccioná un libro existente para agregar el renglón.");
+    return;
+  }
+
+  var cantidad = parsearCantidadEntera(cantidadDeseada);
+  if (cantidad === null) {
+    mostrarMensajeVenta("error", "La cantidad debe ser un número entero mayor que cero.");
+    return;
+  }
+
+  var existente = window.ventaEnCurso.renglones.find(function (r) {
+    return r.libroId === libro.id;
+  });
+
+  if (existente) {
+    existente.cantidad += cantidad;
+    mostrarMensajeVenta("exito", "El libro ya estaba en la venta: se actualizó su cantidad a " + existente.cantidad + ".");
+  } else {
+    window.ventaEnCurso.renglones.push({
+      libroId: libro.id,
+      isbn: libro.isbn,
+      titulo: libro.titulo,
+      precioUnitario: libro.precio, // valor histórico: se copia al renglón
+      cantidad: cantidad
+    });
+    mostrarMensajeVenta("exito", "Renglón agregado a la venta.");
+  }
+
+  renderRenglonesVenta();
+};
+
+window.cambiarCantidadRenglon = function (index, nuevaCantidad) {
+  var renglon = window.ventaEnCurso.renglones[index];
+  if (!renglon) return;
+
+  var cantidad = parsearCantidadEntera(nuevaCantidad);
+  if (cantidad === null) {
+    mostrarMensajeVenta("error", "La cantidad debe ser un número entero mayor que cero.");
+  } else {
+    renglon.cantidad = cantidad;
+    mostrarMensajeVenta("exito", "Cantidad actualizada.");
+  }
+  renderRenglonesVenta();
+};
+
+window.eliminarRenglon = function (index) {
+  window.ventaEnCurso.renglones.splice(index, 1);
+  mostrarMensajeVenta("exito", "Renglón quitado de la venta.");
+  renderRenglonesVenta();
+};
+
+function renderRenglonesVenta() {
+  var tbody = document.getElementById("ventas-renglones");
+  var spanTotal = document.getElementById("ventas-total");
+  var vacio = document.getElementById("ventas-renglones-vacio");
+  if (!tbody) return;
+
+  while (tbody.firstChild) {
+    tbody.removeChild(tbody.firstChild);
+  }
+
+  var renglones = window.ventaEnCurso.renglones;
+  if (vacio) vacio.hidden = renglones.length > 0;
+
+  var total = 0;
+
+  renglones.forEach(function (renglon, index) {
+    var subtotal = redondear2(renglon.cantidad * renglon.precioUnitario);
+    total += subtotal;
+
+    var row = document.createElement("tr");
+
+    var c1 = document.createElement("td");
+    c1.textContent = renglon.titulo;
+    row.appendChild(c1);
+
+    var c2 = document.createElement("td");
+    var inputCantidad = document.createElement("input");
+    inputCantidad.type = "number";
+    inputCantidad.className = "campo";
+    inputCantidad.min = "1";
+    inputCantidad.step = "1";
+    inputCantidad.value = renglon.cantidad;
+    inputCantidad.setAttribute("aria-label", "Cantidad de " + renglon.titulo);
+    inputCantidad.addEventListener("change", function () {
+      window.cambiarCantidadRenglon(index, inputCantidad.value);
+    });
+    c2.appendChild(inputCantidad);
+    row.appendChild(c2);
+
+    var c3 = document.createElement("td");
+    c3.textContent = formatearImporte(renglon.precioUnitario);
+    row.appendChild(c3);
+
+    var c4 = document.createElement("td");
+    c4.textContent = formatearImporte(subtotal);
+    row.appendChild(c4);
+
+    var c5 = document.createElement("td");
+    var btnQuitar = document.createElement("button");
+    btnQuitar.type = "button";
+    btnQuitar.className = "boton";
+    btnQuitar.textContent = "Quitar renglón";
+    btnQuitar.setAttribute("aria-label", "Quitar " + renglon.titulo + " de la venta");
+    btnQuitar.addEventListener("click", function () {
+      window.eliminarRenglon(index);
+    });
+    c5.appendChild(btnQuitar);
+    row.appendChild(c5);
+
+    tbody.appendChild(row);
+  });
+
+  if (spanTotal) spanTotal.textContent = formatearImporte(redondear2(total));
+}
+
+// --- Confirmación de la venta ---
+
+window.confirmarVenta = function () {
+  var selectCliente = document.getElementById("venta-cliente");
+  var clienteId = selectCliente ? selectCliente.value : "";
+
+  var cliente = window.clientes.find(function (c) { return c.id === clienteId; });
+  if (!cliente) {
+    mostrarMensajeVenta("error", "Venta rechazada: seleccioná un cliente existente.");
+    return;
+  }
+
+  var renglones = window.ventaEnCurso.renglones;
+  if (renglones.length === 0) {
+    mostrarMensajeVenta("error", "Venta rechazada: agregá al menos un renglón.");
+    return;
+  }
+
+  var cantidadesValidas = renglones.every(function (r) {
+    return Number.isInteger(r.cantidad) && r.cantidad > 0;
+  });
+  if (!cantidadesValidas) {
+    mostrarMensajeVenta("error", "Venta rechazada: todas las cantidades deben ser enteros mayores que cero.");
+    return;
+  }
+
+  var renglonesVenta = renglones.map(function (r) {
+    return {
+      libroId: r.libroId,
+      isbn: r.isbn,
+      titulo: r.titulo,
+      cantidad: r.cantidad,
+      precioUnitario: r.precioUnitario,
+      subtotal: redondear2(r.cantidad * r.precioUnitario)
+    };
+  });
+
+  var total = redondear2(renglonesVenta.reduce(function (suma, r) {
+    return suma + r.subtotal;
+  }, 0));
+
+  var nuevaVenta = {
+    id: window.generarIdNuevo("v", window.historialVentas),
+    fecha: new Date().toLocaleString("es-AR"),
+    clienteId: cliente.id,
+    clienteNombre: cliente.nombre,
+    clienteEmail: cliente.email,
+    renglones: renglonesVenta,
+    total: total
+  };
+
+  window.historialVentas.push(nuevaVenta);
+  window.guardarEnLocalStorage();
+
+  // Limpiar el formulario para una nueva venta
+  window.ventaEnCurso = { renglones: [] };
+  if (selectCliente) selectCliente.selectedIndex = 0;
+  var selectLibro = document.getElementById("renglon-libro");
+  if (selectLibro) selectLibro.selectedIndex = 0;
+  var inputCantidad = document.getElementById("renglon-cantidad");
+  if (inputCantidad) inputCantidad.value = "1";
+
+  renderRenglonesVenta();
+  window.renderHistorialTabla();
+  mostrarMensajeVenta("exito", "Venta " + nuevaVenta.id + " confirmada. Total: " + formatearImporte(total) + ".");
+};
+
+// --- Historial ---
+
+window.renderHistorialTabla = function () {
+  var tbody = document.getElementById("historial-lista");
+  var vacio = document.getElementById("historial-vacio");
+  if (!tbody) return;
+
+  while (tbody.firstChild) {
+    tbody.removeChild(tbody.firstChild);
+  }
+
+  if (window.historialVentas.length === 0) {
+    if (vacio) vacio.hidden = false;
+    return;
+  }
+  if (vacio) vacio.hidden = true;
+
+  window.historialVentas.forEach(function (venta) {
+    var row = document.createElement("tr");
+
+    var c1 = document.createElement("td");
+    c1.textContent = venta.id;
+    row.appendChild(c1);
+
+    var c2 = document.createElement("td");
+    c2.textContent = venta.fecha;
+    row.appendChild(c2);
+
+    var c3 = document.createElement("td");
+    c3.textContent = venta.clienteNombre;
+    row.appendChild(c3);
+
+    var c4 = document.createElement("td");
+    c4.textContent = formatearImporte(venta.total);
+    row.appendChild(c4);
+
+    var c5 = document.createElement("td");
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "boton";
+    btn.textContent = "Ver detalle";
+    btn.setAttribute("aria-label", "Ver detalle de la venta " + venta.id);
+    btn.addEventListener("click", function () {
+      window.verDetalleVenta(venta.id);
+    });
+    c5.appendChild(btn);
+    row.appendChild(c5);
+
+    tbody.appendChild(row);
+  });
+};
+
+// Muestra los renglones guardados de la venta (con los precios históricos).
+window.verDetalleVenta = function (ventaId) {
+  var contenedor = document.getElementById("historial-detalle");
+  if (!contenedor) return;
+
+  while (contenedor.firstChild) {
+    contenedor.removeChild(contenedor.firstChild);
+  }
+
+  var venta = window.historialVentas.find(function (v) { return v.id === ventaId; });
+  if (!venta) return;
+
+  var titulo = document.createElement("h3");
+  titulo.id = "historial-detalle-titulo";
+  titulo.tabIndex = -1;
+  titulo.textContent = "Detalle de la venta " + venta.id;
+  contenedor.appendChild(titulo);
+
+  var datos = document.createElement("p");
+  datos.textContent = "Fecha: " + venta.fecha + " — Cliente: " + venta.clienteNombre;
+  contenedor.appendChild(datos);
+
+  var scroll = document.createElement("div");
+  scroll.className = "tabla-scroll";
+  var tabla = document.createElement("table");
+
+  var caption = document.createElement("caption");
+  caption.textContent = "Renglones de la venta " + venta.id;
+  tabla.appendChild(caption);
+
+  var thead = document.createElement("thead");
+  var trHead = document.createElement("tr");
+  ["Libro", "Cantidad", "Precio unitario", "Subtotal"].forEach(function (texto) {
+    var th = document.createElement("th");
+    th.scope = "col";
+    th.textContent = texto;
+    trHead.appendChild(th);
+  });
+  thead.appendChild(trHead);
+  tabla.appendChild(thead);
+
+  var tbody = document.createElement("tbody");
+  venta.renglones.forEach(function (r) {
+    var tr = document.createElement("tr");
+    [r.titulo, String(r.cantidad), formatearImporte(r.precioUnitario), formatearImporte(r.subtotal)]
+      .forEach(function (texto) {
+        var td = document.createElement("td");
+        td.textContent = texto;
+        tr.appendChild(td);
+      });
+    tbody.appendChild(tr);
+  });
+  tabla.appendChild(tbody);
+  scroll.appendChild(tabla);
+  contenedor.appendChild(scroll);
+
+  var total = document.createElement("p");
+  var fuerte = document.createElement("strong");
+  fuerte.textContent = "Total: " + formatearImporte(venta.total);
+  total.appendChild(fuerte);
+  contenedor.appendChild(total);
+
+  titulo.focus();
+};
+
+// ============================================================
+// Ej.6: Persistencia con localStorage
+// ============================================================
+
+var CLAVE_LIBROS = "libreria_libros";
+var CLAVE_CLIENTES = "libreria_clientes";
+var CLAVE_VENTAS = "libreria_ventas";
+
+window.guardarEnLocalStorage = function () {
+  try {
+    localStorage.setItem(CLAVE_LIBROS, JSON.stringify(window.libros));
+    localStorage.setItem(CLAVE_CLIENTES, JSON.stringify(window.clientes));
+    localStorage.setItem(CLAVE_VENTAS, JSON.stringify(window.historialVentas));
+  } catch (e) {
+    console.error("Error al guardar en localStorage", e);
+  }
+};
+
+// Lee un array guardado; devuelve null si no existe o está dañado.
+function leerArrayGuardado(clave) {
+  try {
+    var texto = localStorage.getItem(clave);
+    if (texto === null) return null;
+    var datos = JSON.parse(texto);
+    return Array.isArray(datos) ? datos : null;
+  } catch (e) {
+    console.error("No se pudo leer " + clave + " de localStorage", e);
+    return null;
+  }
+}
+
+// Primer inicio: se guardan los ejemplos. Siguientes inicios: se recuperan
+// los registros guardados, sin volver a cargar los ejemplos.
+window.cargarDesdeLocalStorage = function () {
+  var libros = leerArrayGuardado(CLAVE_LIBROS);
+  var clientes = leerArrayGuardado(CLAVE_CLIENTES);
+  var ventas = leerArrayGuardado(CLAVE_VENTAS);
+
+  if (libros) window.libros = libros;
+  if (clientes) window.clientes = clientes;
+  window.historialVentas = ventas || [];
+
+  window.guardarEnLocalStorage();
+};
+
+// ============================================================
+// Ej.5/6: Eventos de la vista de ventas e inicialización
+// ============================================================
+
+function configurarVentasForm() {
+  var btnAgregar = document.getElementById("ventas-agregar-renglon-boton");
+  if (btnAgregar) {
+    btnAgregar.addEventListener("click", function (evt) {
+      evt.preventDefault();
+      var selectLibro = document.getElementById("renglon-libro");
+      var inputCantidad = document.getElementById("renglon-cantidad");
+      window.agregarRenglonVenta(
+        selectLibro ? selectLibro.value : "",
+        inputCantidad ? inputCantidad.value : ""
+      );
+    });
+  }
+
+  var btnConfirmar = document.getElementById("ventas-confirmar-boton");
+  if (btnConfirmar) {
+    btnConfirmar.addEventListener("click", function (evt) {
+      evt.preventDefault();
+      window.confirmarVenta();
+    });
+  }
+}
+
+// Este listener se registra al final, por lo que corre después de los de Ej.3 y Ej.4:
+// carga los datos guardados y vuelve a dibujar todo con ellos.
+document.addEventListener("DOMContentLoaded", function () {
+  window.cargarDesdeLocalStorage();
+
+  window.renderCatalogo(window.libros);
+  renderLibrosTabla();
+  renderClientesTabla();
+  window.actualizarOpciones();
+
+  renderRenglonesVenta();
+  window.renderHistorialTabla();
+  configurarVentasForm();
+});
