@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Librería Apolo Cono Sur — Catálogo</title>
   <link rel="stylesheet" href="css/styles.css">
-  <script defer src="js/app.js?v=3"></script>
+  <script defer src="js/app.js?v=4"></script>
 </head>
 <body>
   <header class="contenedor">
@@ -168,14 +168,10 @@
     <!-- Ventas -->
     <section id="ventas" aria-labelledby="ventas-titulo">
       <h2 id="ventas-titulo">Ventas</h2>
-      <p><strong>Maqueta: sin funcionamiento todavía.</strong></p>
-
       <div>
         <label for="venta-cliente">Cliente</label>
         <select id="venta-cliente" name="cliente" class="campo">
           <option value="" disabled selected>Seleccioná un cliente</option>
-          <option value="cl1">María García (ejemplo)</option>
-          <option value="cl2">Juan Pérez (ejemplo)</option>
         </select>
       </div>
 
@@ -184,8 +180,6 @@
         <label for="renglon-libro">Libro</label>
         <select id="renglon-libro" name="libro" class="campo">
           <option value="" disabled selected>Seleccioná un libro</option>
-          <option value="li1">El Principito (ejemplo)</option>
-          <option value="li2">Cuentos reunidos (ejemplo)</option>
         </select>
         <label for="renglon-cantidad">Cantidad</label>
         <input type="number" id="renglon-cantidad" name="cantidad" min="1" step="1" value="1" class="campo">
@@ -194,7 +188,7 @@
 
       <div class="tabla-scroll">
       <table id="ventas-renglones-tabla">
-        <caption>Renglones de la venta actual (datos de ejemplo)</caption>
+        <caption>Renglones de la venta actual</caption>
         <thead>
           <tr>
             <th scope="col">Libro</th>
@@ -205,35 +199,27 @@
           </tr>
         </thead>
         <tbody id="ventas-renglones">
-          <tr>
-            <td>El Principito (ejemplo)</td>
-            <td>2</td>
-            <td>$5000.00</td>
-            <td>$10000.00</td>
-            <td><button type="button" id="ventas-quitar-renglon-1" class="boton">Quitar renglón</button></td>
-          </tr>
         </tbody>
       </table>
       </div>
-      <p id="ventas-renglones-vacio" role="status" hidden class="mensaje">No hay renglones en la venta actual.</p>
+      <p id="ventas-renglones-vacio" role="status" class="mensaje">No hay renglones en la venta actual.</p>
 
       <h3 id="ventas-resumen-titulo">Resumen de la venta</h3>
       <div id="ventas-resumen">
-        <p>Total: <span id="ventas-total">$10000.00 (ejemplo)</span></p>
+        <p>Total: <span id="ventas-total">$0.00</span></p>
       </div>
       <button type="button" id="ventas-confirmar-boton" class="boton boton-primario">Confirmar venta</button>
-      <p id="ventas-exito" role="status" hidden class="mensaje mensaje-exito">Venta confirmada correctamente (mensaje de ejemplo).</p>
-      <p id="ventas-error" role="alert" hidden class="mensaje mensaje-error">No se pudo confirmar la venta: revisá cliente y renglones (mensaje de ejemplo).</p>
+      <p id="ventas-exito" role="status" hidden class="mensaje mensaje-exito"></p>
+      <p id="ventas-error" role="alert" hidden class="mensaje mensaje-error"></p>
     </section>
 
     <!-- Historial -->
     <section id="historial" aria-labelledby="historial-titulo">
       <h2 id="historial-titulo">Historial</h2>
-      <p><strong>Maqueta: sin funcionamiento todavía.</strong></p>
 
       <div class="tabla-scroll">
       <table id="historial-tabla">
-        <caption>Ventas confirmadas (datos de ejemplo)</caption>
+        <caption>Ventas confirmadas</caption>
         <thead>
           <tr>
             <th scope="col">Identificador</th>
@@ -244,42 +230,12 @@
           </tr>
         </thead>
         <tbody id="historial-lista">
-          <tr>
-            <td>V-001 (ejemplo)</td>
-            <td>2026-10-01 (ejemplo)</td>
-            <td>María García (ejemplo)</td>
-            <td>$10000.00 (ejemplo)</td>
-            <td><a href="#historial-detalle-001">Ver detalle</a></td>
-          </tr>
         </tbody>
       </table>
       </div>
       <p id="historial-vacio" role="status" hidden class="mensaje">No hay ventas registradas todavía.</p>
 
-      <details id="historial-detalle-001">
-        <summary>Detalle de la venta V-001 (ejemplo)</summary>
-        <div class="tabla-scroll">
-        <table id="historial-detalle-001-tabla">
-          <caption>Renglones de la venta V-001 (ejemplo)</caption>
-          <thead>
-            <tr>
-              <th scope="col">Libro</th>
-              <th scope="col">Cantidad</th>
-              <th scope="col">Precio unitario</th>
-              <th scope="col">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody id="historial-detalle-001-renglones">
-            <tr>
-              <td>El Principito (ejemplo)</td>
-              <td>2</td>
-              <td>$5000.00</td>
-              <td>$10000.00</td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
-      </details>
+      <div id="historial-detalle" aria-live="polite"></div>
     </section>
   </main>
 
