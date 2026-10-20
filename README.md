@@ -18,6 +18,8 @@ El proyecto está desarrollado utilizando únicamente HTML, CSS y JavaScript nat
 2. Abrí la carpeta del proyecto.
 3. Hacé doble clic en el archivo **`index.html`** o arrastralo directamente a cualquier navegador web moderno (Google Chrome, Firefox, Edge, etc.) para visualizar la aplicación.
 
+El proyecto no usa imágenes: no hay archivos de imagen ni referencias a imágenes en `index.html`, `css/` ni `js/`.
+
 ---
 
 ## Navegación entre Vistas
@@ -56,13 +58,15 @@ Los datos de ejemplo (editoriales, géneros, autores, clientes y libros) están 
 
 ## Resultados de Casos Manuales de Prueba
 
+Nota: las pruebas con `jsdom` mencionadas en la tabla se ejecutaron localmente durante el desarrollo y no forman parte de este repositorio; los resultados declarados se conservan tal como se observaron.
+
 | Caso | Resultado Esperado | Resultado Observado |
 | :--- | :--- | :--- |
-| **Búsqueda de libros** | Búsqueda parcial por parte del título sin distinguir mayúsculas/minúsculas; búsqueda vacía muestra todo el catálogo; texto inexistente muestra mensaje sin resultados. | **Aprobado**: Coincide correctamente sin importar mayúsculas, muestra todo al vaciar el campo y avisa si no hay coincidencias. |
-| **Alta de libro** | Se rechaza si el título o ISBN están vacíos, precio inválido o ISBN duplicado. El válido se agrega al catálogo y selección de venta. | **Aprobado**: Valida correctamente campos obligatorios, formato de precio y duplicidad de ISBN. |
-| **Alta de cliente** | Se rechazan emails vacíos, con formato inválido o duplicados (sin distinguir mayúsculas y sin espacios). El válido aparece en el listado y selector. | **Aprobado**: Valida correctamente formato de correo y previene correos repetidos. |
-| **Venta simulada (Renglones)** | No se confirma sin cliente, sin renglones o con cantidades inválidas (cero/negativas/decimales). Libros repetidos actualizan la cantidad en lugar de duplicar renglón. | **Aprobado** (ejecutado en pruebas automatizadas con jsdom): sin cliente, sin renglones y cantidades 0, negativas, decimales, vacías o no numéricas no confirman la venta; un libro repetido suma la cantidad al renglón existente y avisa, sin crear otro renglón. |
-| **Venta válida (Cálculos)** | Dos unidades a $1500 y una a $2000 generan subtotales de $3000 y $2000; total general $5000; detalle guardado en el historial. | **Aprobado** (jsdom): subtotales $3000.00 y $2000.00, total $5000.00; el detalle queda en el historial. |
-| **Precio Histórico (Inmutabilidad)** | Al confirmar una venta y modificar posteriormente el precio de catálogo de esos libros en `localStorage`, el historial conserva los importes originales de la venta al recargar. | **Aprobado** (jsdom, modificando `precio` en `libreria_libros` y recargando): el detalle de la venta sigue mostrando $1500.00 y $5000.00. Conviene repetirlo a mano en el navegador antes de entregar. |
-| **Recarga y Persistencia** | Al recargar la página después de altas y ventas, se recuperan los datos correctamente sin duplicar los elementos de ejemplo iniciales. | **Aprobado** (jsdom): tras altas y una venta, al recargar se recuperan libros, clientes y ventas sin duplicar los ejemplos. |
-| **Adaptabilidad y Accesibilidad** | Interfaz utilizable en anchos de 320 px y 1280 px sin desplazamiento horizontal general, con foco visible en controles y tablas con desplazamiento propio. | **Pendiente de verificar manualmente** en el navegador (teclado, 320 px y 1280 px). No se ejecutó en las pruebas automatizadas. |
+| **Búsqueda de libros** | Búsqueda parcial por parte del título sin distinguir mayúsculas/minúsculas; búsqueda vacía muestra todo el catálogo; texto inexistente muestra mensaje sin resultados. | (verificado manualmente) **Aprobado**: Coincide correctamente sin importar mayúsculas, muestra todo al vaciar el campo y avisa si no hay coincidencias. |
+| **Alta de libro** | Se rechaza si el título o ISBN están vacíos, precio inválido o ISBN duplicado. El válido se agrega al catálogo y selección de venta. | (verificado manualmente) **Aprobado**: Valida correctamente campos obligatorios, formato de precio y duplicidad de ISBN. |
+| **Alta de cliente** | Se rechazan emails vacíos, con formato inválido o duplicados (sin distinguir mayúsculas y sin espacios). El válido aparece en el listado y selector. | (verificado manualmente) **Aprobado**: Valida correctamente formato de correo y previene correos repetidos. |
+| **Venta simulada (Renglones)** | No se confirma sin cliente, sin renglones o con cantidades inválidas (cero/negativas/decimales). Libros repetidos actualizan la cantidad en lugar de duplicar renglón. | **Aprobado** (ejecutado en pruebas automatizadas con jsdom): sin cliente, sin renglones y cantidades 0, negativas, decimales, vacías o no numéricas no confirman la venta; un libro repetido suma la cantidad al renglón existente y avisa, sin crear otro renglón. Verificado también manualmente en el navegador. |
+| **Venta válida (Cálculos)** | Dos unidades a $1500 y una a $2000 generan subtotales de $3000 y $2000; total general $5000; detalle guardado en el historial. | **Aprobado** (jsdom): subtotales $3000.00 y $2000.00, total $5000.00; el detalle queda en el historial. Verificado también manualmente en el navegador. |
+| **Precio Histórico (Inmutabilidad)** | Al confirmar una venta y modificar posteriormente el precio de catálogo de esos libros en `localStorage`, el historial conserva los importes originales de la venta al recargar. | **Aprobado** (jsdom, modificando `precio` en `libreria_libros` y recargando): el detalle de la venta sigue mostrando $1500.00 y $5000.00. Conviene repetirlo a mano en el navegador antes de entregar. Verificado también manualmente en el navegador. |
+| **Recarga y Persistencia** | Al recargar la página después de altas y ventas, se recuperan los datos correctamente sin duplicar los elementos de ejemplo iniciales. | **Aprobado** (jsdom): tras altas y una venta, al recargar se recuperan libros, clientes y ventas sin duplicar los ejemplos. Verificado también manualmente en el navegador. |
+| **Adaptabilidad y Accesibilidad** | Interfaz utilizable en anchos de 320 px y 1280 px sin desplazamiento horizontal general, con foco visible en controles y tablas con desplazamiento propio. | Verificado manualmente en el navegador: foco visible al recorrer con Tab, sin desplazamiento horizontal de la página a 320 px y 1280 px, y tablas con desplazamiento propio. |
