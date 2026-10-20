@@ -670,6 +670,21 @@ function parsearCantidadEntera(valor) {
   return n > 0 ? n : null;
 }
 
+function calcularSubtotal(renglon) {
+  return redondear2(renglon.cantidad * renglon.precioUnitario);
+}
+
+function actualizarTotalVenta() {
+  var spanTotal = document.getElementById("ventas-total");
+  if (!spanTotal) return;
+
+  var total = window.ventaEnCurso.renglones.reduce(function (suma, renglon) {
+    return suma + calcularSubtotal(renglon);
+  }, 0);
+
+  spanTotal.textContent = formatearImporte(redondear2(total));
+}
+
 function mostrarMensajeVenta(tipo, texto) {
   var errorEl = document.getElementById("ventas-error");
   var exitoEl = document.getElementById("ventas-exito");
@@ -724,27 +739,29 @@ window.agregarRenglonVenta = function (libroId, cantidadDeseada) {
 
 window.cambiarCantidadRenglon = function (index, nuevaCantidad) {
   var renglon = window.ventaEnCurso.renglones[index];
-  if (!renglon) return;
+  if (!renglon) return false;
 
   var cantidad = parsearCantidadEntera(nuevaCantidad);
   if (cantidad === null) {
     mostrarMensajeVenta("error", "La cantidad debe ser un número entero mayor que cero.");
-  } else {
-    renglon.cantidad = cantidad;
-    mostrarMensajeVenta("exito", "Cantidad actualizada.");
+    return false;
   }
-  renderRenglonesVenta();
+
+  renglon.cantidad = cantidad;
+  mostrarMensajeVenta("exito", "Cantidad actualizada.");
+  actualizarTotalVenta();
+  return true;
 };
 
 window.eliminarRenglon = function (index) {
   window.ventaEnCurso.renglones.splice(index, 1);
   mostrarMensajeVenta("exito", "Renglón quitado de la venta.");
+  actualizarTotalVenta();
   renderRenglonesVenta();
 };
 
 function renderRenglonesVenta() {
   var tbody = document.getElementById("ventas-renglones");
-  var spanTotal = document.getElementById("ventas-total");
   var vacio = document.getElementById("ventas-renglones-vacio");
   if (!tbody) return;
 
@@ -755,13 +772,13 @@ function renderRenglonesVenta() {
   var renglones = window.ventaEnCurso.renglones;
   if (vacio) vacio.hidden = renglones.length > 0;
 
-  var total = 0;
-
   renglones.forEach(function (renglon, index) {
-    var subtotal = redondear2(renglon.cantidad * renglon.precioUnitario);
-    total += subtotal;
+    var subtotal = calcularSubtotal(renglon);
 
     var row = document.createElement("tr");
+
+    var c4 = document.createElement("td");
+    c4.textContent = formatearImporte(subtotal);
 
     var c1 = document.createElement("td");
     c1.textContent = renglon.titulo;
@@ -776,7 +793,12 @@ function renderRenglonesVenta() {
     inputCantidad.value = renglon.cantidad;
     inputCantidad.setAttribute("aria-label", "Cantidad de " + renglon.titulo);
     inputCantidad.addEventListener("change", function () {
-      window.cambiarCantidadRenglon(index, inputCantidad.value);
+      var cantidadValida = window.cambiarCantidadRenglon(index, inputCantidad.value);
+      if (cantidadValida) {
+        c4.textContent = formatearImporte(calcularSubtotal(renglon));
+      } else {
+        inputCantidad.value = renglon.cantidad;
+      }
     });
     c2.appendChild(inputCantidad);
     row.appendChild(c2);
@@ -785,8 +807,6 @@ function renderRenglonesVenta() {
     c3.textContent = formatearImporte(renglon.precioUnitario);
     row.appendChild(c3);
 
-    var c4 = document.createElement("td");
-    c4.textContent = formatearImporte(subtotal);
     row.appendChild(c4);
 
     var c5 = document.createElement("td");
@@ -804,7 +824,7 @@ function renderRenglonesVenta() {
     tbody.appendChild(row);
   });
 
-  if (spanTotal) spanTotal.textContent = formatearImporte(redondear2(total));
+  actualizarTotalVenta();
 }
 
 // --- Confirmación de la venta ---

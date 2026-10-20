@@ -7,6 +7,8 @@ Tecnicatura Universitaria en Programación — Programación III (UTN)
 * Integrante 2: Fabre Andrés
 * Integrante 3: Quiroga Facundo
 
+* Link a Repositorio: https://github.com/marianoemir/Parcial-1-Frontend-de-una-libreria
+
 ---
 
 ## Instrucciones para abrir el proyecto sin `npm`
@@ -63,4 +65,4 @@ Los datos de ejemplo (editoriales, géneros, autores, clientes y libros) están 
 | **Venta válida (Cálculos)** | Dos unidades a $1500 y una a $2000 generan subtotales de $3000 y $2000; total general $5000; detalle guardado en el historial. | **Aprobado** (jsdom): subtotales $3000.00 y $2000.00, total $5000.00; el detalle queda en el historial. |
 | **Precio Histórico (Inmutabilidad)** | Al confirmar una venta y modificar posteriormente el precio de catálogo de esos libros en `localStorage`, el historial conserva los importes originales de la venta al recargar. | **Aprobado** (jsdom, modificando `precio` en `libreria_libros` y recargando): el detalle de la venta sigue mostrando $1500.00 y $5000.00. Conviene repetirlo a mano en el navegador antes de entregar. |
 | **Recarga y Persistencia** | Al recargar la página después de altas y ventas, se recuperan los datos correctamente sin duplicar los elementos de ejemplo iniciales. | **Aprobado** (jsdom): tras altas y una venta, al recargar se recuperan libros, clientes y ventas sin duplicar los ejemplos. |
-| **Adaptabilidad y Accesibilidad** | Interfaz utilizable en anchos de 320 px y 1280 px sin desplazamiento horizontal general, con foco visible en controles y tablas con desplazamiento propio. | **Pendiente de verificar manualmente** en el navegador (teclado, 320 px y 1280 px). No se ejecutó en las pruebas automatizadas. |
+| **Adaptabilidad y Accesibilidad** | Interfaz utilizable en anchos de 320 px y 1280 px sin desplazamiento horizontal general, con foco visible en controles y tablas con desplazamiento propio. | **Pendiente de verificar manualmente** en el navegador (teclado, 320 px y 1280 px). No se ejecutó en las pruebas automatizadas. |
