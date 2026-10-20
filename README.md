@@ -7,7 +7,7 @@ Tecnicatura Universitaria en Programación — Programación III (UTN)
 * Integrante 2: Fabre Andrés
 * Integrante 3: Quiroga Facundo
 
-* Link a Repositorio: https://github.com/marianoemir/Parcial-1-Frontend-de-una-libreria
+🔗 **[Ver repositorio del Parcial 1 - Frontend de Librería](https://github.com/marianoemir/Parcial-1-Frontend-de-una-libreria)**
 
 ---
 
@@ -67,6 +67,6 @@ Nota: las pruebas con `jsdom` mencionadas en la tabla se ejecutaron localmente d
 | **Alta de cliente** | Se rechazan emails vacíos, con formato inválido o duplicados (sin distinguir mayúsculas y sin espacios). El válido aparece en el listado y selector. | (verificado manualmente) **Aprobado**: Valida correctamente formato de correo y previene correos repetidos. |
 | **Venta simulada (Renglones)** | No se confirma sin cliente, sin renglones o con cantidades inválidas (cero/negativas/decimales). Libros repetidos actualizan la cantidad en lugar de duplicar renglón. | **Aprobado** (ejecutado en pruebas automatizadas con jsdom): sin cliente, sin renglones y cantidades 0, negativas, decimales, vacías o no numéricas no confirman la venta; un libro repetido suma la cantidad al renglón existente y avisa, sin crear otro renglón. Verificado también manualmente en el navegador. |
 | **Venta válida (Cálculos)** | Dos unidades a $1500 y una a $2000 generan subtotales de $3000 y $2000; total general $5000; detalle guardado en el historial. | **Aprobado** (jsdom): subtotales $3000.00 y $2000.00, total $5000.00; el detalle queda en el historial. Verificado también manualmente en el navegador. |
-| **Precio Histórico (Inmutabilidad)** | Al confirmar una venta y modificar posteriormente el precio de catálogo de esos libros en `localStorage`, el historial conserva los importes originales de la venta al recargar. | **Aprobado** (jsdom, modificando `precio` en `libreria_libros` y recargando): el detalle de la venta sigue mostrando $1500.00 y $5000.00. Conviene repetirlo a mano en el navegador antes de entregar. Verificado también manualmente en el navegador. |
+| **Precio Histórico (Inmutabilidad)** | Al confirmar una venta y modificar posteriormente el precio de catálogo de esos libros en `localStorage`, el historial conserva los importes originales de la venta al recargar. | **Aprobado** (jsdom, modificando `precio` en `libreria_libros` y recargando): el detalle de la venta sigue mostrando $1500.00 y $5000.00. Verificado también manualmente en el navegador. |
 | **Recarga y Persistencia** | Al recargar la página después de altas y ventas, se recuperan los datos correctamente sin duplicar los elementos de ejemplo iniciales. | **Aprobado** (jsdom): tras altas y una venta, al recargar se recuperan libros, clientes y ventas sin duplicar los ejemplos. Verificado también manualmente en el navegador. |
 | **Adaptabilidad y Accesibilidad** | Interfaz utilizable en anchos de 320 px y 1280 px sin desplazamiento horizontal general, con foco visible en controles y tablas con desplazamiento propio. | Verificado manualmente en el navegador: foco visible al recorrer con Tab, sin desplazamiento horizontal de la página a 320 px y 1280 px, y tablas con desplazamiento propio. |
